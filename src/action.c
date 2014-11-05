@@ -118,7 +118,9 @@ sb_method_dbus (const char *destination,
 	dbus_message_unref (message);
 
 	/* translate error results appropriately */
-	if (G_UNLIKELY(result != NULL && dbus_set_error_from_message (&error, result))) {
+	if (G_UNLIKELY(result == NULL || dbus_set_error_from_message (&error, result))) {
+		g_debug("%p %s", result, error.message);
+		g_debug("1");
 		/* release and reset the result */
 		dbus_message_unref (result);
 		result = NULL;
@@ -128,10 +130,11 @@ sb_method_dbus (const char *destination,
 		dbus_message_unref (result);
 		dbus_error_free (&error);
 		return TRUE;
+	} else {
 	}
 
 	/* otherwise, we failed for some reason */
-	g_warning (G_STRLOC ": %s errror: not prsent?", destination);
+	g_warning (G_STRLOC ": %s error: not present?", destination);
 	dbus_error_free (&error);
 	return FALSE;
 }
